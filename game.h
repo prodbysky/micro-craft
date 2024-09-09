@@ -1,5 +1,6 @@
 #pragma once
 
+#define FNL_IMPL
 #include "external/FastNoiseLite.h"
 #include "world.h"
 
