@@ -1,3 +1,4 @@
+#include "arena.h"
 #define FNL_IMPL
 #include "external/FastNoiseLite.h"
 
@@ -10,10 +11,10 @@
 #define WINDOW_CENTER(rect)                                                    \
     (Vector2) { WINDOW_W / 2 - rect.width / 2, WINDOW_H / 2 - rect.height / 2 }
 
-#define CHUNK_W 8
-#define CHUNK_H 8
-#define NX_CHUNKS 200
-#define NY_CHUNKS 200
+#define CHUNK_W 64
+#define CHUNK_H 64
+#define NX_CHUNKS 256
+#define NY_CHUNKS 256
 
 #define TILE_SIZE 64
 
@@ -30,7 +31,9 @@ typedef struct {
 } Chunk;
 
 typedef struct {
-    Chunk chunks[NX_CHUNKS * NY_CHUNKS];
+    // Chunk chunks[NX_CHUNKS * NY_CHUNKS];
+    Chunk* chunks;
+    Arena arena;
 } World;
 
 typedef struct {
@@ -118,6 +121,9 @@ void draw_chunk(const Chunk* c) {
 
 World init_world() {
     World w;
+    w.arena = make_arena(1024 * 1024 * 1024);
+    w.chunks =
+        (Chunk*) alloc_arena(&w.arena, sizeof(Chunk) * NX_CHUNKS * NY_CHUNKS);
     for (int y = 0; y < NY_CHUNKS; y++) {
         for (int x = 0; x < NX_CHUNKS; x++) {
             Chunk* c        = &w.chunks[y * NX_CHUNKS + x];
@@ -201,11 +207,14 @@ void update_game() {
     if (IsKeyDown(KEY_S)) {
         state.player.y += SPEED * GetFrameTime();
     }
+    state.player.x =
+        Clamp(state.player.x, WINDOW_CENTER(state.player).x, 10000);
+    state.player.y =
+        Clamp(state.player.y, WINDOW_CENTER(state.player).y, 10000);
     update_world(&state.world);
 }
 
 void draw_game() {
-
     BeginDrawing();
     ClearBackground(GetColor(0x181818ff));
     BeginMode2D(state.camera);
