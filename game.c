@@ -1,6 +1,12 @@
 #include "game.h"
 
+#include "world.h"
+
+#include <limits.h>
+#include <raylib.h>
 #include <raymath.h>
+#include <time.h>
+
 GameState state;
 
 void init_game() {
@@ -16,9 +22,19 @@ void init_game() {
     state.world           = init_world();
     state.fnl             = fnlCreateState();
     state.fnl.noise_type  = FNL_NOISE_OPENSIMPLEX2;
-    state.fnl.frequency   = 5;
-    state.water           = LoadTexture("water.png");
-    state.grass           = LoadTexture("grass.png");
+    SetRandomSeed(time(0));
+    state.fnl.seed = GetRandomValue(-1000000000, INT_MAX);
+    TraceLog(LOG_INFO, "Seed: %d", state.fnl.seed);
+    state.fnl.frequency = 5;
+    state.water         = LoadTexture("water.png");
+    state.grass         = LoadTexture("grass.png");
+}
+
+void quit_game() {
+    quit_world(&state.world);
+    UnloadTexture(state.grass);
+    UnloadTexture(state.water);
+    CloseWindow();
 }
 
 void update_game() {

@@ -13,3 +13,9 @@ char* alloc_arena(Arena* arena, size_t n) {
 
     return obj;
 }
+
+void clear_arena(Arena* arena) { arena->used = 0; }
+void delete_arena(Arena* arena) {
+    arena->used = 0;
+    free(arena->memory);
+}

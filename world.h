@@ -31,6 +31,8 @@ void draw_chunk(const Chunk* c);
 
 World init_world();
 
+void quit_world(World* w);
+
 void update_world(World* w);
 
 void draw_world(World* w);

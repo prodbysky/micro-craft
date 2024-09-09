@@ -13,3 +13,5 @@ typedef struct {
 Arena make_arena(size_t cap);
 
 char* alloc_arena(Arena* arena, size_t n);
+void clear_arena(Arena* arena);
+void delete_arena(Arena* arena);

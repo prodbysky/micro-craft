@@ -1,5 +1,6 @@
 #include "world.h"
 
+#include "arena.h"
 #include "game.h"
 
 #include <raymath.h>
@@ -99,6 +100,11 @@ World init_world() {
     }
 
     return w;
+}
+
+void quit_world(World* w) {
+    free(w->chunks);
+    delete_arena(&w->arena);
 }
 
 void update_world(World* w) {
