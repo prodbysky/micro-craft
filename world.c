@@ -34,7 +34,7 @@ void simple_perlin_chunk(Chunk* c) {
             block_world_pos.x /= 100.0;
             block_world_pos.y /= 100.0;
             const bool s =
-                roundf((fnlGetNoise2D(&state.height_map, block_world_pos.x,
+                roundf((fnlGetNoise2D(&state.temperature_map, block_world_pos.x,
                                       block_world_pos.y) +
                         1.8) /
                        2.0);
@@ -54,21 +54,33 @@ void simple_height_map_based_chunk(Chunk* c) {
             block_world_pos.x /= 100.0;
             block_world_pos.y /= 100.0;
 
-            const float height =
-                ((fnlGetNoise2D(&state.height_map, block_world_pos.x,
+            const float temperature =
+                ((fnlGetNoise2D(&state.temperature_map, block_world_pos.x,
+                                block_world_pos.y) +
+                  0.95) /
+                 2.0) +
+                GetRandomValue(0, 1) / 300.0;
+            const float humidity =
+                ((fnlGetNoise2D(&state.humidity_map, block_world_pos.x,
                                 block_world_pos.y) +
                   0.95) /
                  2.0) +
                 GetRandomValue(0, 1) / 300.0;
 
-            if (height < 0.2) {
-                c->blocks[y * CHUNK_W + x].type = BT_WATER;
-            } else if (height < 0.25) {
-                c->blocks[y * CHUNK_W + x].type = BT_SAND;
-            } else if (height < 0.8) {
+            if (temperature > .33 && temperature < .66 && humidity < .5) {
                 c->blocks[y * CHUNK_W + x].type = BT_GRASS;
+            } else if (temperature < .33 && humidity < .5) {
+                c->blocks[y * CHUNK_W + x].type = BT_SNOW;
+            } else if (humidity < .6 && temperature < .66) {
+                c->blocks[y * CHUNK_W + x].type = BT_HOT_PLAIN;
+            } else if (temperature > .66 & humidity < .33) {
+                c->blocks[y * CHUNK_W + x].type = BT_SAND;
+            } else if (temperature > .33 && humidity > .6) {
+                c->blocks[y * CHUNK_W + x].type = BT_JUNGLE;
+            } else if (temperature > .66 && humidity > .3 && humidity < .6) {
+                c->blocks[y * CHUNK_W + x].type = BT_SAVANNA;
             } else {
-                c->blocks[y * CHUNK_W + x].type = BT_ROCK;
+                c->blocks[y * CHUNK_W + x].type = BT_WATER;
             }
         }
     }
@@ -92,24 +104,34 @@ void draw_chunk(const Chunk* c) {
             const Rectangle dest = (Rectangle){
                 .x = pos_in_world.x, .y = pos_in_world.y, TILE_SIZE, TILE_SIZE};
 
+            Texture2D tex = state.water;
+
             switch (b.type) {
-            case BT_WATER: {
-                DrawTexturePro(state.water, src, dest, Vector2Zero(), 0, WHITE);
+            case BT_WATER:
+                break;
+            case BT_GRASS:
+                tex = state.grass;
+                break;
+            case BT_ROCK:
+                tex = state.rock;
+                break;
+            case BT_SAND:
+                tex = state.sand;
+                break;
+            case BT_SAVANNA:
+                tex = state.savanna;
+                break;
+            case BT_JUNGLE:
+                tex = state.jungle;
+                break;
+            case BT_SNOW:
+                tex = state.snow;
+                break;
+            case BT_HOT_PLAIN:
+                tex = state.hot_plain;
                 break;
             }
-            case BT_GRASS: {
-                DrawTexturePro(state.grass, src, dest, Vector2Zero(), 0, WHITE);
-                break;
-            }
-            case BT_ROCK: {
-                DrawTexturePro(state.rock, src, dest, Vector2Zero(), 0, WHITE);
-                break;
-            }
-            case BT_SAND: {
-                DrawTexturePro(state.sand, src, dest, Vector2Zero(), 0, WHITE);
-                break;
-            }
-            }
+            DrawTexturePro(tex, src, dest, Vector2Zero(), 0, WHITE);
         }
     }
 }

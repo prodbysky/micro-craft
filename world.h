@@ -9,6 +9,10 @@ typedef enum : char {
     BT_GRASS,
     BT_SAND,
     BT_ROCK,
+    BT_SAVANNA,
+    BT_JUNGLE,
+    BT_SNOW,
+    BT_HOT_PLAIN
 } BlockType;
 
 typedef struct {

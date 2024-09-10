@@ -12,7 +12,7 @@ GameState state;
 
 void init_game() {
     InitWindow(WINDOW_W, WINDOW_H, "MicroCraft");
-    // SetTargetFPS(120);
+
     state.player = (Rectangle){
         .x = 800, .y = 800, .width = TILE_SIZE, .height = TILE_SIZE};
     state.camera.zoom     = 1;
@@ -20,21 +20,37 @@ void init_game() {
     state.camera.target   = (Vector2){state.player.x + state.player.width / 2,
                                       state.player.y + state.player.height / 2};
     state.camera.offset   = (Vector2){WINDOW_W / 2.0, WINDOW_H / 2.0};
-    state.world           = init_world();
-    state.height_map      = fnlCreateState();
-    state.height_map.noise_type = FNL_NOISE_OPENSIMPLEX2S;
+
+    state.world = init_world();
+
+    state.temperature_map            = fnlCreateState();
+    state.temperature_map.noise_type = FNL_NOISE_OPENSIMPLEX2S;
     SetRandomSeed(time(0));
-    state.height_map.seed = GetRandomValue(-1000000000, INT_MAX);
-    TraceLog(LOG_INFO, "Seed: %d", state.height_map.seed);
-    state.height_map.frequency         = 5;
-    state.height_map.octaves           = 3;
-    state.height_map.lacunarity        = 2;
-    state.height_map.gain              = 0.79;
-    state.height_map.weighted_strength = 0;
-    state.water                        = LoadTexture("water.png");
-    state.grass                        = LoadTexture("grass.png");
-    state.rock                         = LoadTexture("rock.png");
-    state.sand                         = LoadTexture("sand.png");
+    state.temperature_map.seed = GetRandomValue(-1000000000, INT_MAX);
+    TraceLog(LOG_INFO, "Seed: %d", state.temperature_map.seed);
+
+    state.temperature_map.frequency         = 1;
+    state.temperature_map.octaves           = 3;
+    state.temperature_map.lacunarity        = 2;
+    state.temperature_map.gain              = 0.79;
+    state.temperature_map.weighted_strength = 0;
+
+    state.humidity_map            = fnlCreateState();
+    state.humidity_map.noise_type = FNL_NOISE_PERLIN;
+    SetRandomSeed(time(0));
+    state.humidity_map.seed = GetRandomValue(-1000000000, INT_MAX);
+    TraceLog(LOG_INFO, "Seed: %d", state.humidity_map.seed);
+
+    state.humidity_map.frequency = 1;
+
+    state.water     = LoadTexture("water.png");
+    state.grass     = LoadTexture("grass.png");
+    state.rock      = LoadTexture("rock.png");
+    state.sand      = LoadTexture("sand.png");
+    state.savanna   = LoadTexture("savanna.png");
+    state.jungle    = LoadTexture("jungle.png");
+    state.snow      = LoadTexture("snow.png");
+    state.hot_plain = LoadTexture("hot_plain.png");
 }
 
 void quit_game() {
@@ -43,6 +59,10 @@ void quit_game() {
     UnloadTexture(state.water);
     UnloadTexture(state.rock);
     UnloadTexture(state.sand);
+    UnloadTexture(state.savanna);
+    UnloadTexture(state.jungle);
+    UnloadTexture(state.snow);
+    UnloadTexture(state.hot_plain);
     CloseWindow();
 }
 
