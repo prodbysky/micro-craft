@@ -4,8 +4,15 @@
 
 #include <raylib.h>
 
+typedef enum : char {
+    BT_WATER = 0,
+    BT_GRASS,
+    BT_SAND,
+    BT_ROCK,
+} BlockType;
+
 typedef struct {
-    bool solid;
+    BlockType type;
 } Block;
 
 typedef struct {

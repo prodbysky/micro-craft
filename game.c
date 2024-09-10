@@ -28,12 +28,16 @@ void init_game() {
     state.fnl.frequency = 5;
     state.water         = LoadTexture("water.png");
     state.grass         = LoadTexture("grass.png");
+    state.rock          = LoadTexture("rock.png");
+    state.sand          = LoadTexture("sand.png");
 }
 
 void quit_game() {
     quit_world(&state.world);
     UnloadTexture(state.grass);
     UnloadTexture(state.water);
+    UnloadTexture(state.rock);
+    UnloadTexture(state.sand);
     CloseWindow();
 }
 

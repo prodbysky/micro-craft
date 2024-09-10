@@ -10,8 +10,11 @@ typedef struct {
     Camera2D camera;
     World world;
     fnl_state fnl;
+    // TODO: This does not scale, replace this with an atlas
     Texture2D water;
     Texture2D grass;
+    Texture2D sand;
+    Texture2D rock;
 } GameState;
 
 void init_game();

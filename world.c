@@ -1,21 +1,23 @@
 #include "world.h"
 
 #include "arena.h"
+#include "config.h"
 #include "game.h"
 
+#include <raylib.h>
 #include <raymath.h>
 
 extern GameState state;
 
 void fill_chunk(Chunk* c) {
     for (int i = 0; i < CHUNK_W * CHUNK_H; i++) {
-        c->blocks[i] = (Block){.solid = true};
+        c->blocks[i] = (Block){.type = true};
     }
 }
 
 void random_chunk(Chunk* c) {
     for (int i = 0; i < CHUNK_W * CHUNK_H; i++) {
-        c->blocks[i] = (Block){.solid = GetRandomValue(0, 1)};
+        c->blocks[i] = (Block){.type = GetRandomValue(0, 1)};
     }
 }
 
@@ -39,6 +41,14 @@ void simple_perlin_chunk(Chunk* c) {
     }
 }
 
+void sinple_height_map_based_chunk(Chunk* c) {
+    for (int x = 0; x < CHUNK_H; x++) {
+        for (int y = 0; y < CHUNK_W; y++) {
+            c->blocks[y * CHUNK_W + x].type = BT_ROCK;
+        }
+    }
+}
+
 void draw_chunk(const Chunk* c) {
     for (int y = 0; y < CHUNK_H; y++) {
         for (int x = 0; x < CHUNK_W; x++) {
@@ -50,31 +60,31 @@ void draw_chunk(const Chunk* c) {
                 .y = pos_in_chunk.y + c->chunk_offset.y * CHUNK_H * TILE_SIZE,
             };
 
-            if (b.solid) {
-                DrawTexturePro(state.grass,
-                               (Rectangle){.x = pos_in_world.x,
-                                           .y = pos_in_world.y,
-                                           TILE_SIZE / 2.0,
-                                           TILE_SIZE / 2.0},
+            const Rectangle src  = (Rectangle){.x = pos_in_world.x,
+                                               .y = pos_in_world.y,
+                                               TILE_SIZE / 2.0,
+                                               TILE_SIZE / 2.0};
+            const Rectangle dest = (Rectangle){
+                .x = pos_in_world.x, .y = pos_in_world.y, TILE_SIZE, TILE_SIZE};
 
-                               (Rectangle){.x = pos_in_world.x,
-                                           .y = pos_in_world.y,
-                                           TILE_SIZE,
-                                           TILE_SIZE},
-                               Vector2Zero(), 0, WHITE);
-                continue;
+            switch (b.type) {
+            case BT_WATER: {
+                DrawTexturePro(state.water, src, dest, Vector2Zero(), 0, WHITE);
+                break;
             }
-            DrawTexturePro(state.water,
-                           (Rectangle){.x = pos_in_world.x,
-                                       .y = pos_in_world.y,
-                                       TILE_SIZE / 2.0,
-                                       TILE_SIZE / 2.0},
-
-                           (Rectangle){.x = pos_in_world.x,
-                                       .y = pos_in_world.y,
-                                       TILE_SIZE,
-                                       TILE_SIZE},
-                           Vector2Zero(), 0, WHITE);
+            case BT_GRASS: {
+                DrawTexturePro(state.grass, src, dest, Vector2Zero(), 0, WHITE);
+                break;
+            }
+            case BT_ROCK: {
+                DrawTexturePro(state.rock, src, dest, Vector2Zero(), 0, WHITE);
+                break;
+            }
+            case BT_SAND: {
+                DrawTexturePro(state.sand, src, dest, Vector2Zero(), 0, WHITE);
+                break;
+            }
+            }
         }
     }
 }
@@ -117,7 +127,7 @@ void update_world(World* w) {
             c->visible = (CheckCollisionRecs(window_rect, c->chunk_rect));
 
             if (c->visible && !c->initialized) {
-                simple_perlin_chunk(c);
+                sinple_height_map_based_chunk(c);
                 c->initialized = true;
             }
         }
