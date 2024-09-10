@@ -11,7 +11,7 @@ GameState state;
 
 void init_game() {
     InitWindow(WINDOW_W, WINDOW_H, "MicroCraft");
-    SetTargetFPS(120);
+    // SetTargetFPS(120);
     state.player = (Rectangle){
         .x = 800, .y = 800, .width = TILE_SIZE, .height = TILE_SIZE};
     state.camera.zoom     = 1;
