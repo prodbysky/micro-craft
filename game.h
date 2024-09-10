@@ -9,7 +9,7 @@ typedef struct {
     Rectangle player;
     Camera2D camera;
     World world;
-    fnl_state fnl;
+    fnl_state height_map;
     // TODO: This does not scale, replace this with an atlas
     Texture2D water;
     Texture2D grass;

@@ -2,10 +2,12 @@
 
 #include "arena.h"
 #include "config.h"
+#include "external/FastNoiseLite.h"
 #include "game.h"
 
 #include <raylib.h>
 #include <raymath.h>
+#include <stdio.h>
 
 extern GameState state;
 
@@ -31,20 +33,43 @@ void simple_perlin_chunk(Chunk* c) {
             block_world_pos.y += y;
             block_world_pos.x /= 100.0;
             block_world_pos.y /= 100.0;
-            const bool s = roundf((fnlGetNoise2D(&state.fnl, block_world_pos.x,
-                                                 block_world_pos.y) +
-                                   1.8) /
-                                  2.0);
+            const bool s =
+                roundf((fnlGetNoise2D(&state.height_map, block_world_pos.x,
+                                      block_world_pos.y) +
+                        1.8) /
+                       2.0);
 
             c->blocks[y * CHUNK_W + x] = (Block){s};
         }
     }
 }
 
-void sinple_height_map_based_chunk(Chunk* c) {
+void simple_height_map_based_chunk(Chunk* c) {
     for (int x = 0; x < CHUNK_H; x++) {
         for (int y = 0; y < CHUNK_W; y++) {
-            c->blocks[y * CHUNK_W + x].type = BT_ROCK;
+            Vector2 block_world_pos =
+                Vector2Multiply(c->chunk_offset, (Vector2){CHUNK_W, CHUNK_H});
+            block_world_pos.x += x;
+            block_world_pos.y += y;
+            block_world_pos.x /= 100.0;
+            block_world_pos.y /= 100.0;
+
+            const float height =
+                ((fnlGetNoise2D(&state.height_map, block_world_pos.x,
+                                block_world_pos.y) +
+                  0.95) /
+                 2.0) +
+                GetRandomValue(0, 1) / 300.0;
+
+            if (height < 0.2) {
+                c->blocks[y * CHUNK_W + x].type = BT_WATER;
+            } else if (height < 0.25) {
+                c->blocks[y * CHUNK_W + x].type = BT_SAND;
+            } else if (height < 0.8) {
+                c->blocks[y * CHUNK_W + x].type = BT_GRASS;
+            } else {
+                c->blocks[y * CHUNK_W + x].type = BT_ROCK;
+            }
         }
     }
 }
@@ -127,7 +152,7 @@ void update_world(World* w) {
             c->visible = (CheckCollisionRecs(window_rect, c->chunk_rect));
 
             if (c->visible && !c->initialized) {
-                sinple_height_map_based_chunk(c);
+                simple_height_map_based_chunk(c);
                 c->initialized = true;
             }
         }

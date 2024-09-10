@@ -1,5 +1,6 @@
 #include "game.h"
 
+#include "external/FastNoiseLite.h"
 #include "world.h"
 
 #include <limits.h>
@@ -20,16 +21,20 @@ void init_game() {
                                       state.player.y + state.player.height / 2};
     state.camera.offset   = (Vector2){WINDOW_W / 2.0, WINDOW_H / 2.0};
     state.world           = init_world();
-    state.fnl             = fnlCreateState();
-    state.fnl.noise_type  = FNL_NOISE_OPENSIMPLEX2;
+    state.height_map      = fnlCreateState();
+    state.height_map.noise_type = FNL_NOISE_OPENSIMPLEX2S;
     SetRandomSeed(time(0));
-    state.fnl.seed = GetRandomValue(-1000000000, INT_MAX);
-    TraceLog(LOG_INFO, "Seed: %d", state.fnl.seed);
-    state.fnl.frequency = 5;
-    state.water         = LoadTexture("water.png");
-    state.grass         = LoadTexture("grass.png");
-    state.rock          = LoadTexture("rock.png");
-    state.sand          = LoadTexture("sand.png");
+    state.height_map.seed = GetRandomValue(-1000000000, INT_MAX);
+    TraceLog(LOG_INFO, "Seed: %d", state.height_map.seed);
+    state.height_map.frequency         = 5;
+    state.height_map.octaves           = 3;
+    state.height_map.lacunarity        = 2;
+    state.height_map.gain              = 0.79;
+    state.height_map.weighted_strength = 0;
+    state.water                        = LoadTexture("water.png");
+    state.grass                        = LoadTexture("grass.png");
+    state.rock                         = LoadTexture("rock.png");
+    state.sand                         = LoadTexture("sand.png");
 }
 
 void quit_game() {
