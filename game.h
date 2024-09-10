@@ -1,6 +1,5 @@
 #pragma once
 
-#define FNL_IMPL
 #include "external/FastNoiseLite.h"
 #include "world.h"
 
@@ -17,7 +16,5 @@ typedef struct {
 
 void init_game();
 void quit_game();
-
 void update_game();
-
 void draw_game();
