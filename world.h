@@ -5,14 +5,14 @@
 #include <raylib.h>
 
 typedef enum : char {
-    BT_WATER = 0,
-    BT_GRASS,
-    BT_SAND,
-    BT_ROCK,
-    BT_SAVANNA,
-    BT_JUNGLE,
-    BT_SNOW,
-    BT_HOT_PLAIN
+    BT_GRASS     = 0,
+    BT_SAND      = 1,
+    BT_WATER     = 2,
+    BT_HOT_PLAIN = 3,
+    BT_JUNGLE    = 4,
+    BT_ROCK      = 5,
+    BT_SNOW      = 6,
+    BT_SAVANNA   = 7,
 } BlockType;
 
 typedef struct {

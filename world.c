@@ -97,41 +97,12 @@ void draw_chunk(const Chunk* c) {
                 .y = pos_in_chunk.y + c->chunk_offset.y * CHUNK_H * TILE_SIZE,
             };
 
-            const Rectangle src  = (Rectangle){.x = pos_in_world.x,
-                                               .y = pos_in_world.y,
-                                               TILE_SIZE / 2.0,
-                                               TILE_SIZE / 2.0};
             const Rectangle dest = (Rectangle){
                 .x = pos_in_world.x, .y = pos_in_world.y, TILE_SIZE, TILE_SIZE};
 
-            Texture2D tex = state.water;
-
-            switch (b.type) {
-            case BT_WATER:
-                break;
-            case BT_GRASS:
-                tex = state.grass;
-                break;
-            case BT_ROCK:
-                tex = state.rock;
-                break;
-            case BT_SAND:
-                tex = state.sand;
-                break;
-            case BT_SAVANNA:
-                tex = state.savanna;
-                break;
-            case BT_JUNGLE:
-                tex = state.jungle;
-                break;
-            case BT_SNOW:
-                tex = state.snow;
-                break;
-            case BT_HOT_PLAIN:
-                tex = state.hot_plain;
-                break;
-            }
-            DrawTexturePro(tex, src, dest, Vector2Zero(), 0, WHITE);
+            const Rectangle src = (Rectangle){
+                .x = b.type * 32, .y = 0, TILE_SIZE / 2.0, TILE_SIZE / 2.0};
+            DrawTexturePro(state.atlas, src, dest, Vector2Zero(), 0, WHITE);
         }
     }
 }

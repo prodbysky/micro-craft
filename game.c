@@ -39,30 +39,15 @@ void init_game() {
     state.humidity_map.noise_type = FNL_NOISE_PERLIN;
     SetRandomSeed(time(0));
     state.humidity_map.seed = GetRandomValue(-1000000000, INT_MAX);
-    TraceLog(LOG_INFO, "Seed: %d", state.humidity_map.seed);
 
     state.humidity_map.frequency = 1;
 
-    state.water     = LoadTexture("water.png");
-    state.grass     = LoadTexture("grass.png");
-    state.rock      = LoadTexture("rock.png");
-    state.sand      = LoadTexture("sand.png");
-    state.savanna   = LoadTexture("savanna.png");
-    state.jungle    = LoadTexture("jungle.png");
-    state.snow      = LoadTexture("snow.png");
-    state.hot_plain = LoadTexture("hot_plain.png");
+    state.atlas = LoadTexture("atlas.png");
 }
 
 void quit_game() {
     quit_world(&state.world);
-    UnloadTexture(state.grass);
-    UnloadTexture(state.water);
-    UnloadTexture(state.rock);
-    UnloadTexture(state.sand);
-    UnloadTexture(state.savanna);
-    UnloadTexture(state.jungle);
-    UnloadTexture(state.snow);
-    UnloadTexture(state.hot_plain);
+    UnloadTexture(state.atlas);
     CloseWindow();
 }
 
