@@ -16,8 +16,10 @@ void init_game() {
     InitWindow(WINDOW_W, WINDOW_H, "MicroCraft");
     SetTargetFPS(120);
 
-    state.player = (Rectangle){
-        .x = 800, .y = 800, .width = TILE_SIZE, .height = TILE_SIZE};
+    state.player          = (Rectangle){.x      = MAX_POS.x / 2.0,
+                                        .y      = MAX_POS.y / 2.0,
+                                        .width  = TILE_SIZE,
+                                        .height = TILE_SIZE};
     state.camera.zoom     = 1;
     state.camera.rotation = 0;
     state.camera.target   = (Vector2){state.player.x + state.player.width / 2,
@@ -81,7 +83,6 @@ void update_player() {
 void update_game() {
     update_camera();
     update_player();
-
     update_world(&state.world);
 }
 
