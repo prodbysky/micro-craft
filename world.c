@@ -7,42 +7,8 @@
 
 #include <raylib.h>
 #include <raymath.h>
-#include <stdio.h>
 
 extern GameState state;
-
-void fill_chunk(Chunk* c) {
-    for (int i = 0; i < CHUNK_W * CHUNK_H; i++) {
-        c->blocks[i] = (Block){.type = true};
-    }
-}
-
-void random_chunk(Chunk* c) {
-    for (int i = 0; i < CHUNK_W * CHUNK_H; i++) {
-        c->blocks[i] = (Block){.type = GetRandomValue(0, 1)};
-    }
-}
-
-void simple_perlin_chunk(Chunk* c) {
-
-    for (int x = 0; x < CHUNK_H; x++) {
-        for (int y = 0; y < CHUNK_W; y++) {
-            Vector2 block_world_pos =
-                Vector2Multiply(c->chunk_offset, (Vector2){CHUNK_W, CHUNK_H});
-            block_world_pos.x += x;
-            block_world_pos.y += y;
-            block_world_pos.x /= 100.0;
-            block_world_pos.y /= 100.0;
-            const bool s =
-                roundf((fnlGetNoise2D(&state.temperature_map, block_world_pos.x,
-                                      block_world_pos.y) +
-                        1.8) /
-                       2.0);
-
-            c->blocks[y * CHUNK_W + x] = (Block){s};
-        }
-    }
-}
 
 void simple_height_map_based_chunk(Chunk* c) {
     for (int x = 0; x < CHUNK_H; x++) {
@@ -100,8 +66,10 @@ void draw_chunk(const Chunk* c) {
             const Rectangle dest = (Rectangle){
                 .x = pos_in_world.x, .y = pos_in_world.y, TILE_SIZE, TILE_SIZE};
 
-            const Rectangle src = (Rectangle){
-                .x = b.type * 32, .y = 0, TILE_SIZE / 2.0, TILE_SIZE / 2.0};
+            const Rectangle src = (Rectangle){.x = (b.type & 0x00ff) << 5,
+                                              .y = ((b.type >> 8)) << 5,
+                                              TILE_SIZE >> 1,
+                                              TILE_SIZE >> 1};
             DrawTexturePro(state.atlas, src, dest, Vector2Zero(), 0, WHITE);
         }
     }

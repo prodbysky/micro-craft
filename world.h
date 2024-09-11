@@ -4,15 +4,18 @@
 
 #include <raylib.h>
 
-typedef enum : char {
-    BT_GRASS     = 0,
-    BT_SAND      = 1,
-    BT_WATER     = 2,
-    BT_HOT_PLAIN = 3,
-    BT_JUNGLE    = 4,
-    BT_ROCK      = 5,
-    BT_SNOW      = 6,
-    BT_SAVANNA   = 7,
+// Atlas is 64x64 tiles
+// Each enum value has to be a number in format of y coord (1 byte) and x coord
+// (1 byte) Each coordinate has to be less than 64
+typedef enum {
+    BT_GRASS     = 0x0000, // x: 0, y: 0
+    BT_SAND      = 0x0001, // x: 1, y: 0
+    BT_WATER     = 0x0002,
+    BT_HOT_PLAIN = 0x0003,
+    BT_JUNGLE    = 0x0004,
+    BT_ROCK      = 0x0005,
+    BT_SNOW      = 0x0006,
+    BT_SAVANNA   = 0x0007,
 } BlockType;
 
 typedef struct {
@@ -32,11 +35,7 @@ typedef struct {
     Arena arena;
 } World;
 
-void fill_chunk(Chunk* c);
-
-void random_chunk(Chunk* c);
-
-void simple_perlin_chunk(Chunk* c);
+void simple_height_map_based_chunk(Chunk* c);
 
 void draw_chunk(const Chunk* c);
 
