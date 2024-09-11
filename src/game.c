@@ -119,14 +119,16 @@ void update_player() {
     }
 
     const Vector2 pos_in_chunk = {
-        .x = floorf(
-            (state.player.rect.x -
-             state.player.chunks[D_NO]->chunk_offset.x * TILE_SIZE * CHUNK_W) /
-            TILE_SIZE),
-        .y = floorf(
-            (state.player.rect.y -
-             state.player.chunks[D_NO]->chunk_offset.y * TILE_SIZE * CHUNK_H) /
-            TILE_SIZE),
+        .x = Clamp(roundf((state.player.rect.x -
+                           state.player.chunks[D_NO]->chunk_offset.x *
+                               TILE_SIZE * CHUNK_W) /
+                          TILE_SIZE),
+                   0, CHUNK_W - 1),
+        .y = Clamp(roundf((state.player.rect.y -
+                           state.player.chunks[D_NO]->chunk_offset.y *
+                               TILE_SIZE * CHUNK_H) /
+                          TILE_SIZE),
+                   0, CHUNK_H - 1),
     };
     state.player.blocks[D_NO] =
         &state.player.chunks[D_NO]
