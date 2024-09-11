@@ -8,13 +8,13 @@
 #include <math.h>
 #include <raylib.h>
 #include <raymath.h>
-#include <stdio.h>
 #include <time.h>
 
 GameState state;
 
 void init_game() {
     InitWindow(WINDOW_W, WINDOW_H, "MicroCraft");
+    SetTargetFPS(120);
 
     state.player = (Rectangle){
         .x = 800, .y = 800, .width = TILE_SIZE, .height = TILE_SIZE};
@@ -54,27 +54,34 @@ void quit_game() {
     CloseWindow();
 }
 
-void update_game() {
-    state.camera.target = (Vector2){state.player.x + state.player.width / 2,
-                                    state.player.y + state.player.height / 2};
+void update_camera() {
+    state.camera.target =
+        (Vector2){Clamp(state.player.x + state.player.width / 2,
+                        WINDOW_CENTER(state.player).x + TILE_SIZE / 2.0,
+                        MAX_POS.x - WINDOW_W / 2.0),
+                  Clamp(state.player.y + state.player.height / 2,
+                        WINDOW_CENTER(state.player).y + TILE_SIZE / 2.0,
+                        MAX_POS.y - WINDOW_H / 2.0)};
+}
 
-    if (IsKeyDown(KEY_A)) {
+void update_player() {
+    if (IsKeyDown(KEY_A))
         state.player.x -= SPEED * GetFrameTime();
-    }
-    if (IsKeyDown(KEY_D)) {
+    if (IsKeyDown(KEY_D))
         state.player.x += SPEED * GetFrameTime();
-    }
-    if (IsKeyDown(KEY_W)) {
+    if (IsKeyDown(KEY_W))
         state.player.y -= SPEED * GetFrameTime();
-    }
-    if (IsKeyDown(KEY_S)) {
+    if (IsKeyDown(KEY_S))
         state.player.y += SPEED * GetFrameTime();
-    }
 
-    state.player.x =
-        Clamp(state.player.x, WINDOW_CENTER(state.player).x, 10000);
-    state.player.y =
-        Clamp(state.player.y, WINDOW_CENTER(state.player).y, 10000);
+    state.player.x = roundf(Clamp(state.player.x, 0, MAX_POS.x - TILE_SIZE));
+    state.player.y = roundf(Clamp(state.player.y, 0, MAX_POS.y - TILE_SIZE));
+}
+
+void update_game() {
+    update_camera();
+    update_player();
+
     update_world(&state.world);
 }
 
