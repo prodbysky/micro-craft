@@ -5,8 +5,16 @@
 
 #include <raylib.h>
 
+typedef enum { D_NO = 0, D_LEFT, D_TOP, D_RIGHT, D_BOTTOM, D_COUNT } Direction;
+
 typedef struct {
-    Rectangle player;
+    Rectangle rect;
+    Chunk* chunks[D_COUNT];
+    Block* blocks[D_COUNT];
+} Player;
+
+typedef struct {
+    Player player;
     Camera2D camera;
     World world;
     fnl_state temperature_map;
