@@ -1,4 +1,5 @@
 #pragma once
+#include <raylib.h>
 #define SPEED 250
 #define WINDOW_W 1280
 #define WINDOW_H 720
@@ -9,5 +10,7 @@
 #define CHUNK_H 16
 #define NX_CHUNKS 256
 #define NY_CHUNKS 256
-
 #define TILE_SIZE 64
+
+#define CHUNK_SIZE                                                             \
+    (Vector2) { .x = CHUNK_W * TILE_SIZE, .y = CHUNK_H * TILE_SIZE }

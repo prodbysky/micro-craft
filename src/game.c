@@ -1,11 +1,14 @@
 #include "game.h"
 
 #include "../external/FastNoiseLite.h"
+#include "config.h"
 #include "world.h"
 
 #include <limits.h>
+#include <math.h>
 #include <raylib.h>
 #include <raymath.h>
+#include <stdio.h>
 #include <time.h>
 
 GameState state;
@@ -67,6 +70,7 @@ void update_game() {
     if (IsKeyDown(KEY_S)) {
         state.player.y += SPEED * GetFrameTime();
     }
+
     state.player.x =
         Clamp(state.player.x, WINDOW_CENTER(state.player).x, 10000);
     state.player.y =
