@@ -1,3 +1,4 @@
 set -xe
 
-gcc arena.c game.c world.c main.c -o micro -O3 -lraylib -lm
+
+gcc src/arena.c src/game.c src/world.c src/main.c -o build/micro -O3 -lraylib -lm

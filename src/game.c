@@ -1,6 +1,6 @@
 #include "game.h"
 
-#include "external/FastNoiseLite.h"
+#include "../external/FastNoiseLite.h"
 #include "world.h"
 
 #include <limits.h>

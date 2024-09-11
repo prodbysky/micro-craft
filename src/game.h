@@ -1,6 +1,6 @@
 #pragma once
 
-#include "external/FastNoiseLite.h"
+#include "../external/FastNoiseLite.h"
 #include "world.h"
 
 #include <raylib.h>

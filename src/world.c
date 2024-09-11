@@ -1,8 +1,8 @@
 #include "world.h"
 
+#include "../external/FastNoiseLite.h"
 #include "arena.h"
 #include "config.h"
-#include "external/FastNoiseLite.h"
 #include "game.h"
 
 #include <raylib.h>
@@ -10,7 +10,7 @@
 
 extern GameState state;
 
-void simple_height_map_based_chunk(Chunk* c) {
+void generate_chunk(Chunk* c) {
     for (int x = 0; x < CHUNK_H; x++) {
         for (int y = 0; y < CHUNK_W; y++) {
             Vector2 block_world_pos =
@@ -34,38 +34,39 @@ void simple_height_map_based_chunk(Chunk* c) {
                 GetRandomValue(0, 1) / 300.0;
 
             const float r = GetRandomValue(0, 100) / 100.0;
+            Block* block  = &c->blocks[y * CHUNK_W + x];
 
             if (temperature > .33 && temperature < .66 && humidity < .5) {
                 if (r < 0.01) {
-                    c->blocks[y * CHUNK_W + x].type = BT_WOOD;
+                    block->type = BT_WOOD;
                 } else if (r < 0.03) {
-                    c->blocks[y * CHUNK_W + x].type = BT_BUSH;
+                    block->type = BT_BUSH;
                 } else if (r < 0.04) {
-                    c->blocks[y * CHUNK_W + x].type = BT_LOOSE_ROCKS;
+                    block->type = BT_LOOSE_ROCKS;
                 } else if (r < 0.05) {
-                    c->blocks[y * CHUNK_W + x].type = BT_ROCK;
+                    block->type = BT_ROCK;
                 } else {
-                    c->blocks[y * CHUNK_W + x].type = BT_GRASS;
+                    block->type = BT_GRASS;
                 }
             } else if (temperature < .33 && humidity < .5) {
-                c->blocks[y * CHUNK_W + x].type = BT_SNOW;
+                block->type = BT_SNOW;
             } else if (humidity < .6 && temperature < .66) {
-                c->blocks[y * CHUNK_W + x].type = BT_HOT_PLAIN;
+                block->type = BT_HOT_PLAIN;
             } else if (temperature > .66 & humidity < .33) {
                 if (r < 0.01) {
-                    c->blocks[y * CHUNK_W + x].type = BT_CACTUS;
+                    block->type = BT_CACTUS;
                 } else {
-                    c->blocks[y * CHUNK_W + x].type = BT_SAND;
+                    block->type = BT_SAND;
                 }
             } else if (temperature > .33 && humidity > .6) {
-                c->blocks[y * CHUNK_W + x].type = BT_JUNGLE;
+                block->type = BT_JUNGLE;
             } else if (temperature > .66 && humidity > .3 && humidity < .6) {
-                c->blocks[y * CHUNK_W + x].type = BT_SAVANNA;
+                block->type = BT_SAVANNA;
             } else {
                 if (r < 0.01) {
-                    c->blocks[y * CHUNK_W + x].type = BT_LILLY_PAD;
+                    block->type = BT_LILLY_PAD;
                 } else {
-                    c->blocks[y * CHUNK_W + x].type = BT_WATER;
+                    block->type = BT_WATER;
                 }
             }
         }
@@ -90,6 +91,7 @@ void draw_chunk(const Chunk* c) {
                                               .y = (b.type >> 8) << 5,
                                               TILE_SIZE >> 1,
                                               TILE_SIZE >> 1};
+
             DrawTexturePro(state.atlas, src, dest, Vector2Zero(), 0, WHITE);
         }
     }
@@ -133,7 +135,7 @@ void update_world(World* w) {
             c->visible = (CheckCollisionRecs(window_rect, c->chunk_rect));
 
             if (c->visible && !c->initialized) {
-                simple_height_map_based_chunk(c);
+                generate_chunk(c);
                 c->initialized = true;
             }
         }
