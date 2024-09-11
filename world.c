@@ -33,20 +33,40 @@ void simple_height_map_based_chunk(Chunk* c) {
                  2.0) +
                 GetRandomValue(0, 1) / 300.0;
 
+            const float r = GetRandomValue(0, 100) / 100.0;
+
             if (temperature > .33 && temperature < .66 && humidity < .5) {
-                c->blocks[y * CHUNK_W + x].type = BT_GRASS;
+                if (r < 0.01) {
+                    c->blocks[y * CHUNK_W + x].type = BT_WOOD;
+                } else if (r < 0.03) {
+                    c->blocks[y * CHUNK_W + x].type = BT_BUSH;
+                } else if (r < 0.04) {
+                    c->blocks[y * CHUNK_W + x].type = BT_LOOSE_ROCKS;
+                } else if (r < 0.05) {
+                    c->blocks[y * CHUNK_W + x].type = BT_ROCK;
+                } else {
+                    c->blocks[y * CHUNK_W + x].type = BT_GRASS;
+                }
             } else if (temperature < .33 && humidity < .5) {
                 c->blocks[y * CHUNK_W + x].type = BT_SNOW;
             } else if (humidity < .6 && temperature < .66) {
                 c->blocks[y * CHUNK_W + x].type = BT_HOT_PLAIN;
             } else if (temperature > .66 & humidity < .33) {
-                c->blocks[y * CHUNK_W + x].type = BT_SAND;
+                if (r < 0.01) {
+                    c->blocks[y * CHUNK_W + x].type = BT_CACTUS;
+                } else {
+                    c->blocks[y * CHUNK_W + x].type = BT_SAND;
+                }
             } else if (temperature > .33 && humidity > .6) {
                 c->blocks[y * CHUNK_W + x].type = BT_JUNGLE;
             } else if (temperature > .66 && humidity > .3 && humidity < .6) {
                 c->blocks[y * CHUNK_W + x].type = BT_SAVANNA;
             } else {
-                c->blocks[y * CHUNK_W + x].type = BT_WATER;
+                if (r < 0.01) {
+                    c->blocks[y * CHUNK_W + x].type = BT_LILLY_PAD;
+                } else {
+                    c->blocks[y * CHUNK_W + x].type = BT_WATER;
+                }
             }
         }
     }
@@ -67,7 +87,7 @@ void draw_chunk(const Chunk* c) {
                 .x = pos_in_world.x, .y = pos_in_world.y, TILE_SIZE, TILE_SIZE};
 
             const Rectangle src = (Rectangle){.x = (b.type & 0x00ff) << 5,
-                                              .y = ((b.type >> 8)) << 5,
+                                              .y = (b.type >> 8) << 5,
                                               TILE_SIZE >> 1,
                                               TILE_SIZE >> 1};
             DrawTexturePro(state.atlas, src, dest, Vector2Zero(), 0, WHITE);
